@@ -43,14 +43,14 @@ Orderless + vertico + corfu to turn minibuffer into centered floating command pa
 A navigation paradigm that uses LRU & bounding box related scanning to reliably and deterministically navigate focusable rectangles in a 2D plane.
 
 ~~~
-╔══════════╗ ╔┏━━┓══════╗
-║╔════╗╔══╗║ ║┗━━┛═╗╔══╗║
-║║╔╗╔╗║║╔╗║║ or ║║╔╗╔┏━━┓╗║║
+╔══════════╗      ╔┏━━┓══════╗
+║╔════╗╔══╗║      ║┗━━┛═╗╔══╗║
+║║╔╗╔╗║║╔╗║║  or  ║║╔╗╔┏━━┓╗║║
 ║║╚╝╚╝║║╚╝║║ even ║║┏━━┓━━┛╝║║
-║║╔══╗║║╔╗║║ ║║┃ ┃║║╔╗║║
-║║╚══╝║║╚╝║║ ║║┗━━┛┏━━┓║║
-║╚════╝╚══╝║ ║╚════┗━━┛╝║
-╚══════════╝ ╚══════════╝
+║║╔══╗║║╔╗║║      ║║┃  ┃║║╔╗║║
+║║╚══╝║║╚╝║║      ║║┗━━┛┏━━┓║║
+║╚════╝╚══╝║      ║╚════┗━━┛╝║
+╚══════════╝      ╚══════════╝
 ~~~
 
 
