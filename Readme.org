@@ -45,6 +45,7 @@ orderless + vertico + corfu to turn minibuffer into centered floating command pa
 🔳 typhob-myedne navigation
     navigation paradigm that uses LRU & bounding box related scanning to reliably and deterministically
     navigate focusable rectangles in a 2d plane, ev
+#+END_VERSE
     #+begin_src
     ╔══════════╗      ╔┏━━┓══════╗
     ║╔════╗╔══╗║      ║┗━━┛═╗╔══╗║
@@ -55,7 +56,7 @@ orderless + vertico + corfu to turn minibuffer into centered floating command pa
     ║╚════╝╚══╝║      ║╚════┗━━┛╝║
     ╚══════════╝      ╚══════════╝
     #+end_src
-
+#+BEGIN_VERSE
     
     
 
