@@ -3,7 +3,7 @@
 The m3ga emacs experience
 
 
-
+#+BEGIN_VERSE
 inspired by the muscle memory of common text editors and IDEs.
 Kate, VSCode, Intellij, NetBeans
 regular browser defaults.
@@ -90,3 +90,4 @@ orderless + vertico + corfu to turn minibuffer into centered floating command pa
 
 - leader opens dual fields both ( dedicated keychord sequence field & command palette )
     probs nah
+#+END_VERSE
