@@ -7,6 +7,7 @@ The m3ga emacs experience
 inspired by the muscle memory of common text editors and IDEs.
 Kate, VSCode, Intellij, NetBeans
 regular browser defaults.
+#+END_VERSE
 
 also inspired by the ideas behind ergoemacs by that Xah guy, fly keys
 
