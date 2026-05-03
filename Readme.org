@@ -9,7 +9,7 @@ Kate, VSCode, Intellij, NetBeans
 regular browser defaults.
 #+END_VERSE
 
-#+BEGIN_VERSE
+
 also inspired by the ideas behind ergoemacs by that Xah guy, fly keys
 
 This config is mine. it is for me.
@@ -22,13 +22,13 @@ elpaca packaging
 
 orderless + vertico + corfu to turn minibuffer into centered floating command palette
 
+#+BEGIN_VERSE
 ✅ ctrl+t :  new tab
 ✅ ctrl+←↑↓→ :  jumps text
 ✅ ctrl+pgup/pgdn :  tab right/left
 ✅ shift+←↑↓→ :  selects text
 ✅ ctrl+( :  split pane right
 ✅ ctrl+) :  split pane down
-
 #+END_VERSE
 
 🔳 frutiger-motions
