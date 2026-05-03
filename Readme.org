@@ -25,11 +25,11 @@ Orderless + vertico + corfu to turn minibuffer into centered floating command pa
 - *alt:* navigation 
 - *ctrl:* modification, mode switching, jumping
 
-#+BEGIN_EXAMPLE
+#+BEGIN_VERSE
 1D nav: ←→ ↓↑ ad sw ( hl jk / j; lk )
 2D nav: ←↓↑→ aswd ( hjkl / jlk; )
 3D nav: wasdqe
-#+END_EXAMPLE
+#+END_VERSE
 
 1D navigable orders examples:
 - adjacent (visually next to, on an axis xyz. e.g., visual list of tabs/buffers in a line)
