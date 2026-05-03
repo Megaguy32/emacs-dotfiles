@@ -23,12 +23,12 @@ elpaca packaging
 orderless + vertico + corfu to turn minibuffer into centered floating command palette
 
 
-✅ ctrl+t :  new tab  
-✅ ctrl+←↑↓→ :  jumps text  
-✅ ctrl+pgup/pgdn :  tab right/left  
-✅ shift+←↑↓→ :  selects text  
-✅ ctrl+( :  split pane right  
-✅ ctrl+) :  split pane down  
+✅ ctrl+t :  new tab  \\
+✅ ctrl+←↑↓→ :  jumps text  \\
+✅ ctrl+pgup/pgdn :  tab right/left  \\
+✅ shift+←↑↓→ :  selects text  \\
+✅ ctrl+( :  split pane right  \\
+✅ ctrl+) :  split pane down  \\
 
 
 🔳 frutiger-motions
