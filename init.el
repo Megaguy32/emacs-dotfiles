@@ -1,4 +1,8 @@
+;; -*- lexical-binding: t; -*-
+
 (setq package-enable-at-startup nil)
+(setq native-comp-async-report-warnings-errors 'silent)
+(setq native-comp-jit-compilation t) 
 
 (defvar startup/file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
@@ -62,7 +66,10 @@
   '(("quit"  . "\\(quit\\|delete\\|close\\|kill\\)")
     ("close" . "\\(quit\\|delete\\|close\\|kill\\)")
     ("del"   . "\\(delete\\|kill\\|remove\\)")
-    ("file"  . "\\(file\\|document\\|buffer\\)")))
+    ("file"  . "\\(file\\|document\\|buffer\\)")
+    ("paste" . "\\(paste\\|yank\\|document\\|buffer\\)")
+    ("open"  . "\\(find\\)"))
+)
 
 ;; Create the custom matching style
 (defun my/orderless-synonym-style (pattern)
@@ -82,6 +89,10 @@
        :rev :newest)
   :config
   (standard-keys-mode 1))
+(add-hook 'standard-keys-mode-hook
+          (lambda ()
+            (when (and standard-keys-mode (eq major-mode 'vterm-mode))
+              (setq-local standard-keys-mode nil))))
 (use-package casual
   :bind ("C-," . my-casual-menu))
 ;;(use-package vim-tab-bar
@@ -95,11 +106,43 @@
 (use-package vim-tab-bar
   :config
   (vim-tab-bar-mode 1))
-(use-package markdown-mode :demand t)
+(use-package markdown-mode
+  :mode ("\\.md\\'" . markdown-mode)
+  :mode ("\\.markdown\\'" . markdown-mode)
+  :hook (markdown-mode . my/markdown-prettify-checkboxes)
+  :config
+  (defun my/markdown-prettify-checkboxes ()
+    "Render markdown checkboxes as emojis with a trailing space and reveal on point."
+    (setq-local prettify-symbols-alist
+                `(("[ ]" . (?🔳 (Br . Bl) ?\s))
+                  ("[x]" . (?✅ (Br . Bl) ?\s))
+                  ("[X]" . (?✅ (Br . Bl) ?\s))
+                  ("[-]" . (?➖ (Br . Bl) ?\s))))
+
+    ;; Essential for matching [ ] as a symbol
+    (setq-local prettify-symbols-compose-predicate
+                (lambda (start end match) t))
+
+    ;; Snaps back to [ ] when the cursor is on the emoji
+    (setq-local prettify-symbols-unprettify-at-point 'right-edge)
+    
+    (prettify-symbols-mode 1)))
 (use-package adaptive-wrap
-  :hook (visual-line-mode . adaptive-wrap-prefix-mode)
-  :config (global-visual-line-mode 1)
-)
+ ;;:ensure t
+ :hook (visual-line-mode . adaptive-wrap-prefix-mode)
+ :config
+ (global-visual-line-mode 1))
+;; (use-package adaptive-wrap
+;;  :hook (visual-line-mode . adaptive-wrap-prefix-mode)
+;;  :config (global-visual-line-mode 1))
+;; (use-package adaptive-wrap
+;;  :hook (visual-line-mode . visual-line-mode)
+;;  :config (global-visual-line-mode 1))
+(use-package emacs ;; no need adaptive-wrap
+  :ensure nil  ;; emacs is built it
+  :config
+  (global-visual-line-mode 1)
+  (global-visual-wrap-prefix-mode 1))
 (use-package treesit-auto
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
@@ -135,10 +178,27 @@
   (orderless-matching-styles '(my/orderless-synonym-style
                                orderless-literal
                                orderless-regexp)))
+(use-package rustic
+  :config
+  (setq rustic-format-on-save nil)
+  (setq rustic-lsp-client 'eglot)
+  :custom
+  (rustic-cargo-use-last-stored-arguments t))
+(use-package vterm
+  :hook (vterm-mode . (lambda () 
+                        (setq-local standard-keys-mode nil))))
+(use-package pcre2el
+  :config
+  ;; Enables PCRE syntax globally for standard Emacs searches
+  (pcre-mode 1))
+(use-package rg)
+(use-package multiple-cursors)
+(use-package mc-extras)
+(use-package syntax-subword
+  :config
+  (syntax-subword-mode 1))
+;; SYNCRONIZEElpaca error: (elpaca mc-extras mc-extras mc-extras (:package mc-extras :id mc-extras :type git :protocol https :inherit t :depth treeless) (queued) /home/ethan/.config/emacs/elpaca/builds/mc-extras /home/ethan/.config/emacs/elpaca/sources/mc-extras/ nil nil (elpaca-activate) (:package mc-extras :fetcher github :repo knu/mc-extras.el :files (*.el *.el.in dir *.info *.texi *.texinfo doc/dir doc/*.info doc/*.texi doc/*.texinfo lisp/*.el docs/dir docs/*.info docs/*.texi docs/*.texinfo (:exclude .dir-locals.el test.el tests.el *-test.el *-tests.el LICENSE README* *-pkg.el)) :source MELPA :id mc-extras :type git :protocol https :inherit t :depth treeless) nil nil nil nil 1 (27138 22853 746582 407000) init nil ((queued (27138 22853 815355 107000) Continued by: elpaca--process 2)) t), Non-existant source dir: "/home/ethan/.config/emacs/elpaca/sources/mc-extras/"
 
-
-
-;; SYNCRONIZE
 (elpaca-wait) ;; Force Elpaca to finish markdown-mode before next line
 
 
@@ -157,7 +217,6 @@
 ;; UI behavior 
 ;; ----------------------------- 
 (setq inhibit-startup-screen t) 
-(cua-mode t) 
 
 ;; ----------------------------- 
 ;; Font fallback (symbols + emoji) 
@@ -185,13 +244,22 @@
 (global-set-key [S-down-mouse-1] nil)
 (global-set-key [S-mouse-1] 'mouse-set-region)
 
+
 ;; Global bindings. Load immediately.
-(keymap-global-set "M-<up>"    'windmove-up)
-(keymap-global-set "M-<down>"  'windmove-down)
-(keymap-global-set "M-<left>"  'windmove-left)
-(keymap-global-set "M-<right>" 'windmove-right)
-(keymap-global-set "C-(" 'split-window-right)
-(keymap-global-set "C-)" 'split-window-below)
+(keymap-global-set "M-<up>"    #'windmove-up)
+(keymap-global-set "M-<down>"  #'windmove-down)
+(keymap-global-set "M-<left>"  #'windmove-left)
+(keymap-global-set "M-<right>" #'windmove-right)
+(keymap-global-set "C-(" #'split-window-right)
+(keymap-global-set "C-)" #'split-window-below)
+;;(keymap-global-set "C-d" #'duplicate-dwim)
+;; Unbind the default mark command from C-SPC
+(global-unset-key (kbd "C-SPC"))
+
+;; Bind C-SPC to the LSP completion trigger
+(global-set-key (kbd "C-SPC") 'completion-at-point)
+
+
 
 ;; Core Emacs hook. Evaluate immediately.
 (add-hook 'kill-buffer-hook #'my/save-buffer-before-kill)
@@ -206,16 +274,24 @@
   (keymap-set standard-keys-default-keymap "C-w" #'my/close-tab-or-split-or-buffer)
   (keymap-set standard-keys-default-keymap "M-S-w" #'my/undo-kill-buffer)
   (keymap-set standard-keys-default-keymap "C-0" (lambda () (interactive) (text-scale-set 0)))
-  (keymap-unset standard-keys-default-keymap "C-<return>")
-  (keymap-unset standard-keys-default-keymap "C-RET")
+  ;;(keymap-unset standard-keys-default-keymap "C-<return>")
+  ;;(keymap-unset standard-keys-default-keymap "C-RET")
   (keymap-set standard-keys-default-keymap "C-<return>" #'my/bare-newline)
+  (keymap-set standard-keys-default-keymap "S-<return>" #'my/smart-newline)
+  (keymap-set standard-keys-default-keymap "C-d"        #'duplicate-dwim)
+  (keymap-set standard-keys-default-keymap "C-M-<up>"   #'mc/mark-previous-lines)
+  (keymap-set standard-keys-default-keymap "C-M-<down>" #'mc/mark-next-lines)
 )
+
+(setq duplicate-line-final-position 1)
+(setq duplicate-region-final-position 1)
+
 
 (defun my/close-tab-or-split-or-buffer ()
   (interactive)
   (cond
-   ((> (length (tab-bar-tabs)) 1) (tab-close))
    ((> (count-windows) 1)         (delete-window))
+   ((> (length (tab-bar-tabs)) 1) (tab-close))
    (t                             (kill-current-buffer))))
 
 
@@ -289,6 +365,7 @@
 ;;(set-fontset-font t 'symbol "Twemoji" nil 'append)
 
 
+
 (defun pipe-region-to-shell (start end command)
   (interactive "r\nsShell command: ")
   (shell-command-on-region start end command t t))
@@ -312,6 +389,7 @@
           my/line-number-face-remaps)
     (push (face-remap-add-relative 'line-number-current-line :height scale)
           my/line-number-face-remaps)))
+         
 
 (add-hook 'text-scale-mode-hook #'sync-line-number-height)
 
@@ -322,7 +400,6 @@
 (setq scroll-conservatively 101)
 (setq scroll-margin 1)
 
-
 (defun my/newline-preserve-indent ()
   (interactive)
   (let ((indent (save-excursion
@@ -332,10 +409,6 @@
     (newline)
     (insert indent)))
 
-
-
-(global-set-key (kbd "RET") #'my/newline-preserve-indent)
-(global-set-key (kbd "S-RET") #'my/newline-preserve-indent)
 
 (defun my/bare-newline ()
   (interactive)
@@ -357,16 +430,6 @@
 
 
 (global-prettify-symbols-mode +1)
-
-
-
-
-;; Unbind the default mark command from C-SPC
-(global-unset-key (kbd "C-SPC"))
-
-;; Bind C-SPC to the LSP completion trigger
-(global-set-key (kbd "C-SPC") 'completion-at-point)
-
 
 
 ;; background transparency
@@ -495,3 +558,47 @@ Otherwise open FILE in a new tab in the existing frame."
           (lambda ()
             (setq file-name-handler-alist startup/file-name-handler-alist)
             (setq gc-cons-threshold 800000)))
+
+
+(defun my/smart-newline ()
+  "Open new line carrying over leading whitespace and prefix characters, like Kate."
+  (interactive)
+  (let* ((line (string-trim-right (thing-at-point 'line t) "\n"))
+         ;;(prefix (when (string-match "^[[:space:]]*[^[:alnum:][:space:]]*[[:space:]]*" line)
+         (prefix (when (string-match "^[^[:alnum:]]*" line)
+                   (match-string 0 line))))
+    (newline) (insert prefix)))
+
+
+(setq-default prettify-symbols-unprettify-at-point 'right-edge)
+
+
+(defun jump-forward-S-edge ()
+  "Jump forward to the end of the current contiguous alphanumeric block."
+  (interactive "^")
+  ;; 1. Skip spaces, tabs, newlines, parens, brackets, dots, underscores, and hyphens
+  (skip-chars-forward " \t\n\r()[]<>_-")
+  ;; 2. Jump forward until we hit any of those characters again
+  (skip-chars-forward "^ \t\n\r()[]<>_-"))
+
+(defun jump-backward-S-edge ()
+  "Jump backward to the start of the current contiguous alphanumeric block."
+  (interactive "^")
+  (skip-chars-backward " \t\n\r()[]<>_-")
+  (skip-chars-backward "^ \t\n\r()[]<>_-"))
+
+(defun kill-S-edge ()
+  "Kill from point to the next whitespace edge."
+  (interactive)
+  (let ((start (point)))
+    (jump-forward-S-edge)
+    (kill-region start (point))))
+
+(global-set-key [remap forward-word] #'jump-forward-S-edge)
+(global-set-key [remap backward-word] #'jump-backward-S-edge)
+(global-set-key [remap kill-word] #'kill-S-edge)
+
+(global-set-key (kbd "C-<right>") #'jump-forward-S-edge)
+(global-set-key (kbd "C-<left>") #'jump-backward-S-edge)
+(global-set-key (kbd "M-d") #'kill-S-edge)
+
