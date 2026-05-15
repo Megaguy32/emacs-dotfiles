@@ -1,0 +1,17 @@
+.mc-lists.el
+.mc-lists.el~
+auto-save-list/
+early-init.el~
+eln-cache/
+elpa/
+elpaca/
+eshell/
+games/
+history
+init.el~
+packages.el~
+projects
+recentf
+tramp
+transient/
+url/
